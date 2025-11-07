@@ -18,8 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configure CMake and Build
-        run: cmake -S ./Tests -B ./Tests/build
-        run: cmake --build ./Tests/build
+        run: cmake -S ./Tests -B ./Tests/build && cmake --build ./Tests/build
 
       - name: Run tests
         run: cd ./Tests/build && ctest --output-on-failure
