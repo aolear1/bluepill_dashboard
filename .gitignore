@@ -43,4 +43,6 @@ Thumbs.db
 # STM32CubeMX metadata
 *.mxproject
 
+# Test build data
+Tests/build/
 
