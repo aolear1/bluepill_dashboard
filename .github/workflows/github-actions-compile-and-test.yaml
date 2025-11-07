@@ -2,24 +2,24 @@ name: GitHub Actions Compile and Test
 run-name: ${{ github.actor }} is hopefully not a bozo
 
 on:
-	pull_request:
-		branches:
-			- main
-	push:
-		branches:
-			- main
-	workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-	Run-Tests:
-		runs-on: ubuntu-latest
-		steps:
-			- name: Checkout repository
-				uses: actions/checkout@v4
+  Run-Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-			- name: Configure CMake and Build
-				run: cmake -S ./Tests -B ./Tests/build
-				run: cmake --build ./Tests/build
+      - name: Configure CMake and Build
+        run: cmake -S ./Tests -B ./Tests/build
+        run: cmake --build ./Tests/build
 
-			- name: Run tests
-				run: cd ./Tests/build && ctest --output-on-failure
+      - name: Run tests
+        run: cd ./Tests/build && ctest --output-on-failure
