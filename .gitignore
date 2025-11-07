@@ -1,0 +1,46 @@
+# STM32CubeIDE / Eclipse specific
+.metadata/
+*.launch
+*.log
+*.bak
+*.tmp
+
+# Build artifacts
+Debug/
+Release/
+build/
+*.elf
+*.bin
+*.hex
+*.map
+*.list
+*.o
+*.d
+*.su
+*.gcda
+*.gcno
+
+# Auto-generated project files
+*.settings/
+*.cproject
+*.project
+
+# Temporary / local
+~$*
+*.swp
+*.swo
+*.svd
+*.idea/
+*.vscode/
+*.DS_Store
+Thumbs.db
+
+# Optional - keep your firmware outputs clean
+*.zip
+*.tar
+*.gz
+
+# STM32CubeMX metadata
+*.mxproject
+
+
