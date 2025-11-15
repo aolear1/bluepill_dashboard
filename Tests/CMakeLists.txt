@@ -12,13 +12,18 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-
 enable_testing()
 
 add_executable(
   tests
+  ../Core/Src/utils.c
+  ../Core/Inc/utils.h
   test_suite.cc
 )
+
+# Corrected target name from 'test' to 'tests'
+target_include_directories(tests PRIVATE ../Core/Inc)
+
 target_link_libraries(
   tests
   GTest::gtest_main
