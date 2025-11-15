@@ -6,6 +6,7 @@
  */
 #include "main.h"
 #include "bmsParams.h"
+#include "utils.h"
 
 BMS_Params_t bmsParams = {
     .cell_overvoltage = configBMS_CELL_OVERVOLTAGE,
@@ -17,14 +18,11 @@ BMS_Params_t bmsParams = {
 void updateBMSChecksum()
 {
 	uint8_t *struct_val = (uint8_t*)&bmsParams;
-
-	//increment pointer to pass header
 	struct_val++;
-	uint8_t checksum = 0;
-	for (uint8_t i = 0; i < sizeof(bmsParams)-configBMS_CHECKSUM_PASSES; i++) {
-		checksum ^= *struct_val;
-		struct_val++;
-	}
+	uint8_t checksum;
+
+	calculateChecksum(struct_val, sizeof(bmsParams)-configBMS_CHECKSUM_PASSES, &checksum);
+
 	bmsParams.checksum = checksum;
 }
 
