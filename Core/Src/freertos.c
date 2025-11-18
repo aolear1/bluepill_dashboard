@@ -67,15 +67,8 @@ void vUartTransmitTask(void *pvParameters)
 
 void vUartReceiveTask(void *pvParameters)
 {
-	enum State {Header, Body, Checksum};
-
-	//uint8_t possible_params[sizeof(bmsParams)];
-	uint8_t byte;
 	for (;;) {
-		while (xQueueReceive(uartRxQueue, &byte, 0) == pdPASS) {
-
-		}
-		vTaskDelay(pdMS_TO_TICKS(2000));
+		//random change
 	}
 }
 
