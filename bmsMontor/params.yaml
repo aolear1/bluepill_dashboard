@@ -1,0 +1,6 @@
+params:
+    cell_overvoltage: uint8_t
+    cell_undervoltage: uint32_t
+    debug_mode: uint8_t
+    checksum: uint8_t
+
