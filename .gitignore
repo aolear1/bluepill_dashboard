@@ -9,6 +9,7 @@
 Debug/
 Release/
 build/
+Testing/
 *.elf
 *.bin
 *.hex
