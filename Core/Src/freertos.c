@@ -4,6 +4,7 @@
 #include "queue.h"
 #include "freertos_tasks.h"
 #include "bmsParams.h"
+#include "utils.h"
 
 /*User Definitions*/
 #define STACK_SIZE 500
@@ -30,6 +31,11 @@ uint8_t xQueueStack[QUEUE_DATA_SIZE * MAX_QUEUE_LEN];
 StaticQueue_t xQueueBuffer;
 uint8_t			rxByte;
 
+typedef enum {
+    WAIT_FOR_HEADER,
+    WAIT_FOR_PAYLOAD
+} UartState_t;
+
 void initFreeRTOS()
 {
 	//Initialize tasks
@@ -44,6 +50,8 @@ void initFreeRTOS()
 	//initialize queue
 	uartRxQueue = xQueueCreateStatic( MAX_QUEUE_LEN, QUEUE_DATA_SIZE, xQueueStack, &xQueueBuffer);
 
+	//Initialize transfers
+	HAL_UART_Receive_IT(&huart1, &rxByte, 1);
 	//start scheduler
 	vTaskStartScheduler();
 }
@@ -53,7 +61,6 @@ void initFreeRTOS()
 void vUartTransmitTask(void *pvParameters)
 {
 	for(;;) {
-		HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 		//Attempt to toggle DMA transfer
 		if (HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&bmsParams, sizeof(bmsParams)) == HAL_OK) {
 			// Wait for the DMA to complete
@@ -67,8 +74,44 @@ void vUartTransmitTask(void *pvParameters)
 
 void vUartReceiveTask(void *pvParameters)
 {
+	uint8_t last_read_byte;
+	BMS_Params_t possible;
+	possible.header = configBMS_HEADER;
+	UartState_t state = WAIT_FOR_HEADER;
+	uint8_t *index;
+
 	for (;;) {
-		//random change
+		// Wait for a byte from the queue
+		if (xQueueReceive(uartRxQueue, &last_read_byte, pdMS_TO_TICKS(10)) == pdTRUE) {
+
+			switch(state) {
+
+				case WAIT_FOR_HEADER:
+					if (last_read_byte == 0xA5) {
+						// Example action for 0xA5
+						HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+					} else if (last_read_byte == configBMS_HEADER) {
+						index = (uint8_t*)&possible + 1;
+						state = WAIT_FOR_PAYLOAD;
+					}
+					break;
+
+				case WAIT_FOR_PAYLOAD:
+					*(index++) = last_read_byte;
+
+					if (index == (uint8_t*)(&possible + 1)) {
+						processPacket(&possible, &bmsParams, sizeof(bmsParams)-configBMS_CHECKSUM_PASSES);
+						state = WAIT_FOR_HEADER;  // Back to waiting for header
+					}
+					break;
+
+				default:
+					state = WAIT_FOR_HEADER;
+					break;
+			}
+		}
+
+		vTaskDelay(pdMS_TO_TICKS(1));
 	}
 }
 

@@ -18,6 +18,7 @@ add_executable(
   tests
   ../Core/Src/utils.c
   ../Core/Inc/utils.h
+  ../Core/Inc/bmsParams.h
   test_suite.cc
 )
 
